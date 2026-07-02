@@ -3,21 +3,32 @@
   <div class="topbar">
     <h2>Categories</h2>
   </div>
-  <form method="post" action="/categories" class="form-grid">
+  <form method="post" action="<%= editingCategory ? '/categories/edit/' + editingCategory.id : '/categories' %>" class="form-grid">
     <div class="input-group">
       <label>Category name</label>
-      <input name="category_name" placeholder="New category" required />
+      <input name="category_name" placeholder="New category" value="<%= editingCategory ? editingCategory.category_name : '' %>" required />
     </div>
     <div></div>
-    <button class="btn" type="submit">Add Category</button>
+    <button class="btn" type="submit"><%= editingCategory ? 'Update Category' : 'Add Category' %></button>
+    <% if (editingCategory) { %><a class="btn secondary" href="/categories">Cancel</a><% } %>
   </form>
 </div>
 <div class="card">
   <table class="table">
-    <thead><tr><th>ID</th><th>Category</th></tr></thead>
+    <thead><tr><th>ID</th><th>Category</th><th>Action</th></tr></thead>
     <tbody>
       <% categories.forEach(category => { %>
-        <tr><td><%= category.id %></td><td><%= category.category_name %></td></tr>
+        <tr>
+          <td><%= category.id %></td>
+          <td><%= category.category_name %></td>
+          <td class="invoice-actions">
+            <a class="btn secondary" href="/categories/edit/<%= category.id %>">Edit</a>
+            <form method="post" action="/categories/delete" onsubmit="return confirm('Delete this category?');" style="display:inline-block;">
+              <input type="hidden" name="category_id" value="<%= category.id %>" />
+              <button class="btn secondary" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
       <% }); %>
     </tbody>
   </table>

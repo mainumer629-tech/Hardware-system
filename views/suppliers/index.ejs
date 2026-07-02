@@ -3,22 +3,23 @@
   <div class="topbar">
     <h2>Suppliers</h2>
   </div>
-  <form method="post" action="/suppliers" class="form-grid">
+  <form method="post" action="<%= editingSupplier ? '/suppliers/edit/' + editingSupplier.id : '/suppliers' %>" class="form-grid">
     <div class="input-group">
       <label>Supplier name</label>
-      <input name="supplier_name" placeholder="Supplier name" required />
+      <input name="supplier_name" placeholder="Supplier name" value="<%= editingSupplier ? editingSupplier.supplier_name : '' %>" required />
     </div>
     <div class="input-group">
       <label>Phone</label>
-      <input name="phone" placeholder="Phone" />
+      <input name="phone" placeholder="Phone" value="<%= editingSupplier ? editingSupplier.phone || '' : '' %>" />
     </div>
     <div></div>
-    <button class="btn" type="submit">Add Supplier</button>
+    <button class="btn" type="submit"><%= editingSupplier ? 'Update Supplier' : 'Add Supplier' %></button>
+    <% if (editingSupplier) { %><a class="btn secondary" href="/suppliers">Cancel</a><% } %>
   </form>
 </div>
 <div class="card">
   <table class="table">
-    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Balance</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Balance</th><th>Action</th></tr></thead>
     <tbody>
       <% suppliers.forEach(supplier => { %>
         <tr>
@@ -26,6 +27,13 @@
           <td><%= supplier.supplier_name %></td>
           <td><%= supplier.phone || '-' %></td>
           <td><%= supplier.current_ledger_balance.toFixed(2) %></td>
+          <td class="invoice-actions">
+            <a class="btn secondary" href="/suppliers/edit/<%= supplier.id %>">Edit</a>
+            <form method="post" action="/suppliers/delete" onsubmit="return confirm('Delete this supplier?');" style="display:inline-block;">
+              <input type="hidden" name="supplier_id" value="<%= supplier.id %>" />
+              <button class="btn secondary" type="submit">Delete</button>
+            </form>
+          </td>
         </tr>
       <% }); %>
     </tbody>

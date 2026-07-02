@@ -1,18 +1,19 @@
 <%- include('../partials', { title: 'Customers', user: user }) %>
 <div class="card">
-  <form method="post" action="/customers" class="form-grid">
+  <form method="post" action="<%= editingCustomer ? '/customers/edit/' + editingCustomer.id : '/customers' %>" class="form-grid">
     <div class="topbar">
       <h2>Customers</h2>
-      <button class="btn" type="submit">Add Customer</button>
+      <button class="btn" type="submit"><%= editingCustomer ? 'Update Customer' : 'Add Customer' %></button>
     </div>
     <div class="input-group">
       <label>Customer name</label>
-      <input name="customer_name" placeholder="Customer name" required />
+      <input name="customer_name" placeholder="Customer name" value="<%= editingCustomer ? editingCustomer.customer_name : '' %>" required />
     </div>
     <div class="input-group">
       <label>Phone</label>
-      <input name="phone" placeholder="Phone" />
+      <input name="phone" placeholder="Phone" value="<%= editingCustomer ? editingCustomer.phone || '' : '' %>" />
     </div>
+    <% if (editingCustomer) { %><a class="btn secondary" href="/customers">Cancel</a><% } %>
   </form>
 </div>
 <div class="card">
@@ -26,6 +27,7 @@
           <td><%= customer.phone || '-' %></td>
           <td><%= customer.current_khata_balance.toFixed(2) %></td>
           <td class="invoice-actions">
+            <a class="btn secondary" href="/customers/edit/<%= customer.id %>">Edit</a>
             <form method="post" action="/customers/delete" onsubmit="return confirm('Delete this customer?');" style="display:inline-block;">
               <input type="hidden" name="customer_id" value="<%= customer.id %>" />
               <button class="btn secondary" type="submit">Delete</button>

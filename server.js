@@ -85,8 +85,35 @@ app.get('/categories', authRequired, (req, res) => {
   });
 });
 
+app.get('/categories/edit/:id', authRequired, (req, res) => {
+  const categoryId = req.params.id;
+  db.all('SELECT * FROM categories ORDER BY category_name', [], (err, rows) => {
+    db.get('SELECT * FROM categories WHERE id = ?', [categoryId], (errCategory, category) => {
+      res.render('categories/index', {
+        user: req.session.user,
+        categories: rows || [],
+        editingCategory: category || null
+      });
+    });
+  });
+});
+
 app.post('/categories', authRequired, (req, res) => {
   db.run('INSERT INTO categories (category_name) VALUES (?)', [req.body.category_name || ''], () => res.redirect('/categories'));
+});
+
+app.post('/categories/edit/:id', authRequired, (req, res) => {
+  db.run('UPDATE categories SET category_name = ? WHERE id = ?', [req.body.category_name || '', req.params.id], () => res.redirect('/categories'));
+});
+
+app.post('/categories/delete', authRequired, (req, res) => {
+  const categoryId = req.body.category_id;
+  if (!categoryId) return res.redirect('/categories');
+
+  db.serialize(() => {
+    db.run('UPDATE products SET category_id = NULL WHERE category_id = ?', [categoryId]);
+    db.run('DELETE FROM categories WHERE id = ?', [categoryId], () => res.redirect('/categories'));
+  });
 });
 
 app.get('/brands', authRequired, (req, res) => {
@@ -95,8 +122,35 @@ app.get('/brands', authRequired, (req, res) => {
   });
 });
 
+app.get('/brands/edit/:id', authRequired, (req, res) => {
+  const brandId = req.params.id;
+  db.all('SELECT * FROM brands ORDER BY brand_name', [], (err, rows) => {
+    db.get('SELECT * FROM brands WHERE id = ?', [brandId], (errBrand, brand) => {
+      res.render('brands/index', {
+        user: req.session.user,
+        brands: rows || [],
+        editingBrand: brand || null
+      });
+    });
+  });
+});
+
 app.post('/brands', authRequired, (req, res) => {
   db.run('INSERT INTO brands (brand_name) VALUES (?)', [req.body.brand_name || ''], () => res.redirect('/brands'));
+});
+
+app.post('/brands/edit/:id', authRequired, (req, res) => {
+  db.run('UPDATE brands SET brand_name = ? WHERE id = ?', [req.body.brand_name || '', req.params.id], () => res.redirect('/brands'));
+});
+
+app.post('/brands/delete', authRequired, (req, res) => {
+  const brandId = req.body.brand_id;
+  if (!brandId) return res.redirect('/brands');
+
+  db.serialize(() => {
+    db.run('UPDATE products SET brand_id = NULL WHERE brand_id = ?', [brandId]);
+    db.run('DELETE FROM brands WHERE id = ?', [brandId], () => res.redirect('/brands'));
+  });
 });
 
 app.get('/suppliers', authRequired, (req, res) => {
@@ -105,8 +159,35 @@ app.get('/suppliers', authRequired, (req, res) => {
   });
 });
 
+app.get('/suppliers/edit/:id', authRequired, (req, res) => {
+  const supplierId = req.params.id;
+  db.all('SELECT * FROM suppliers ORDER BY supplier_name', [], (err, rows) => {
+    db.get('SELECT * FROM suppliers WHERE id = ?', [supplierId], (errSupplier, supplier) => {
+      res.render('suppliers/index', {
+        user: req.session.user,
+        suppliers: rows || [],
+        editingSupplier: supplier || null
+      });
+    });
+  });
+});
+
 app.post('/suppliers', authRequired, (req, res) => {
   db.run('INSERT INTO suppliers (supplier_name, phone) VALUES (?, ?)', [req.body.supplier_name || '', req.body.phone || ''], () => res.redirect('/suppliers'));
+});
+
+app.post('/suppliers/edit/:id', authRequired, (req, res) => {
+  db.run('UPDATE suppliers SET supplier_name = ?, phone = ? WHERE id = ?', [req.body.supplier_name || '', req.body.phone || '', req.params.id], () => res.redirect('/suppliers'));
+});
+
+app.post('/suppliers/delete', authRequired, (req, res) => {
+  const supplierId = req.body.supplier_id;
+  if (!supplierId) return res.redirect('/suppliers');
+
+  db.serialize(() => {
+    db.run('UPDATE purchases SET supplier_id = NULL WHERE supplier_id = ?', [supplierId]);
+    db.run('DELETE FROM suppliers WHERE id = ?', [supplierId], () => res.redirect('/suppliers'));
+  });
 });
 
 app.get('/customers', authRequired, (req, res) => {
@@ -115,8 +196,25 @@ app.get('/customers', authRequired, (req, res) => {
   });
 });
 
+app.get('/customers/edit/:id', authRequired, (req, res) => {
+  const customerId = req.params.id;
+  db.all('SELECT * FROM customers ORDER BY customer_name', [], (err, rows) => {
+    db.get('SELECT * FROM customers WHERE id = ?', [customerId], (errCustomer, customer) => {
+      res.render('customers/index', {
+        user: req.session.user,
+        customers: rows || [],
+        editingCustomer: customer || null
+      });
+    });
+  });
+});
+
 app.post('/customers', authRequired, (req, res) => {
   db.run('INSERT INTO customers (customer_name, phone) VALUES (?, ?)', [req.body.customer_name || '', req.body.phone || ''], () => res.redirect('/customers'));
+});
+
+app.post('/customers/edit/:id', authRequired, (req, res) => {
+  db.run('UPDATE customers SET customer_name = ?, phone = ? WHERE id = ?', [req.body.customer_name || '', req.body.phone || '', req.params.id], () => res.redirect('/customers'));
 });
 
 app.post('/customers/delete', authRequired, (req, res) => {
@@ -146,10 +244,36 @@ app.get('/products', authRequired, (req, res) => {
   });
 });
 
+app.get('/products/edit/:id', authRequired, (req, res) => {
+  const productId = req.params.id;
+  db.all(`SELECT p.*, c.category_name, b.brand_name FROM products p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN brands b ON p.brand_id = b.id`, [], (err, rows) => {
+    db.all('SELECT * FROM categories', [], (e1, categories) => {
+      db.all('SELECT * FROM brands', [], (e2, brands) => {
+        db.get('SELECT * FROM products WHERE id = ?', [productId], (errProduct, product) => {
+          res.render('products/index', {
+            user: req.session.user,
+            products: rows || [],
+            categories: categories || [],
+            brands: brands || [],
+            editingProduct: product || null
+          });
+        });
+      });
+    });
+  });
+});
+
 app.post('/products', authRequired, (req, res) => {
   const { product_name, sku_barcode, category_id, brand_id, unit, purchase_price, selling_price, current_stock_qty, min_stock_alert } = req.body;
   db.run(`INSERT INTO products (product_name, sku_barcode, category_id, brand_id, unit, purchase_price, selling_price, current_stock_qty, min_stock_alert)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [product_name, sku_barcode, category_id || null, brand_id || null, unit || 'Pcs', purchase_price || 0, selling_price || 0, current_stock_qty || 0, min_stock_alert || 5], () => res.redirect('/products'));
+});
+
+app.post('/products/edit/:id', authRequired, (req, res) => {
+  const { product_name, sku_barcode, category_id, brand_id, unit, purchase_price, selling_price, current_stock_qty, min_stock_alert } = req.body;
+  db.run(`UPDATE products SET product_name = ?, sku_barcode = ?, category_id = ?, brand_id = ?, unit = ?, purchase_price = ?, selling_price = ?, current_stock_qty = ?, min_stock_alert = ? WHERE id = ?`, [product_name, sku_barcode, category_id || null, brand_id || null, unit || 'Pcs', parseFloat(purchase_price) || 0, parseFloat(selling_price) || 0, parseFloat(current_stock_qty) || 0, parseFloat(min_stock_alert) || 5, req.params.id], () => res.redirect('/products'));
 });
 
 app.post('/products/delete', authRequired, (req, res) => {

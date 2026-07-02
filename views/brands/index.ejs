@@ -3,21 +3,32 @@
   <div class="topbar">
     <h2>Brands</h2>
   </div>
-  <form method="post" action="/brands" class="form-grid">
+  <form method="post" action="<%= editingBrand ? '/brands/edit/' + editingBrand.id : '/brands' %>" class="form-grid">
     <div class="input-group">
       <label>Brand name</label>
-      <input name="brand_name" placeholder="New brand" required />
+      <input name="brand_name" placeholder="New brand" value="<%= editingBrand ? editingBrand.brand_name : '' %>" required />
     </div>
     <div></div>
-    <button class="btn" type="submit">Add Brand</button>
+    <button class="btn" type="submit"><%= editingBrand ? 'Update Brand' : 'Add Brand' %></button>
+    <% if (editingBrand) { %><a class="btn secondary" href="/brands">Cancel</a><% } %>
   </form>
 </div>
 <div class="card">
   <table class="table">
-    <thead><tr><th>ID</th><th>Brand</th></tr></thead>
+    <thead><tr><th>ID</th><th>Brand</th><th>Action</th></tr></thead>
     <tbody>
       <% brands.forEach(brand => { %>
-        <tr><td><%= brand.id %></td><td><%= brand.brand_name %></td></tr>
+        <tr>
+          <td><%= brand.id %></td>
+          <td><%= brand.brand_name %></td>
+          <td class="invoice-actions">
+            <a class="btn secondary" href="/brands/edit/<%= brand.id %>">Edit</a>
+            <form method="post" action="/brands/delete" onsubmit="return confirm('Delete this brand?');" style="display:inline-block;">
+              <input type="hidden" name="brand_id" value="<%= brand.id %>" />
+              <button class="btn secondary" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
       <% }); %>
     </tbody>
   </table>

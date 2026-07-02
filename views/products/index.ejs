@@ -1,24 +1,24 @@
 <%- include('../partials', { title: 'Products', user: user }) %>
 <div class="card">
-  <form method="post" action="/products" class="form-grid">
+  <form method="post" action="<%= editingProduct ? '/products/edit/' + editingProduct.id : '/products' %>" class="form-grid">
     <div class="topbar">
       <h2>Products</h2>
-      <button class="btn" type="submit">Add Product</button>
+      <button class="btn" type="submit"><%= editingProduct ? 'Update Product' : 'Add Product' %></button>
     </div>
     <div class="input-group">
       <label>Product name</label>
-      <input name="product_name" placeholder="Name" required />
+      <input name="product_name" placeholder="Name" value="<%= editingProduct ? editingProduct.product_name : '' %>" required />
     </div>
     <div class="input-group">
       <label>SKU / Barcode</label>
-      <input name="sku_barcode" placeholder="SKU / Barcode" />
+      <input name="sku_barcode" placeholder="SKU / Barcode" value="<%= editingProduct ? editingProduct.sku_barcode || '' : '' %>" />
     </div>
     <div class="input-group">
       <label>Category</label>
       <select name="category_id">
         <option value="">Category</option>
         <% categories.forEach(category => { %>
-          <option value="<%= category.id %>"><%= category.category_name %></option>
+          <option value="<%= category.id %>" <%= editingProduct && editingProduct.category_id == category.id ? 'selected' : '' %>><%= category.category_name %></option>
         <% }); %>
       </select>
     </div>
@@ -27,36 +27,37 @@
       <select name="brand_id">
         <option value="">Brand</option>
         <% brands.forEach(brand => { %>
-          <option value="<%= brand.id %>"><%= brand.brand_name %></option>
+          <option value="<%= brand.id %>" <%= editingProduct && editingProduct.brand_id == brand.id ? 'selected' : '' %>><%= brand.brand_name %></option>
         <% }); %>
       </select>
     </div>
     <div class="input-group">
       <label>Unit</label>
       <select name="unit">
-        <option value="Pcs">Pcs</option>
-        <option value="Kg">Kg</option>
-        <option value="Feet">Feet</option>
-        <option value="Bag">Bag</option>
-        <option value="Roll">Roll</option>
+        <option value="Pcs" <%= editingProduct && editingProduct.unit == 'Pcs' ? 'selected' : '' %>>Pcs</option>
+        <option value="Kg" <%= editingProduct && editingProduct.unit == 'Kg' ? 'selected' : '' %>>Kg</option>
+        <option value="Feet" <%= editingProduct && editingProduct.unit == 'Feet' ? 'selected' : '' %>>Feet</option>
+        <option value="Bag" <%= editingProduct && editingProduct.unit == 'Bag' ? 'selected' : '' %>>Bag</option>
+        <option value="Roll" <%= editingProduct && editingProduct.unit == 'Roll' ? 'selected' : '' %>>Roll</option>
       </select>
     </div>
     <div class="input-group">
       <label>Purchase price</label>
-      <input name="purchase_price" type="number" step="0.01" placeholder="Purchase price" required />
+      <input name="purchase_price" type="number" step="0.01" placeholder="Purchase price" value="<%= editingProduct ? editingProduct.purchase_price : 0 %>" required />
     </div>
     <div class="input-group">
       <label>Selling price</label>
-      <input name="selling_price" type="number" step="0.01" placeholder="Selling price" required />
+      <input name="selling_price" type="number" step="0.01" placeholder="Selling price" value="<%= editingProduct ? editingProduct.selling_price : 0 %>" required />
     </div>
     <div class="input-group">
       <label>Stock quantity</label>
-      <input name="current_stock_qty" type="number" step="0.01" placeholder="Stock qty" value="0" />
+      <input name="current_stock_qty" type="number" step="0.01" placeholder="Stock qty" value="<%= editingProduct ? editingProduct.current_stock_qty : 0 %>" />
     </div>
     <div class="input-group">
       <label>Min stock alert</label>
-      <input name="min_stock_alert" type="number" step="0.01" placeholder="Min stock alert" value="5" />
+      <input name="min_stock_alert" type="number" step="0.01" placeholder="Min stock alert" value="<%= editingProduct ? editingProduct.min_stock_alert : 5 %>" />
     </div>
+    <% if (editingProduct) { %><a class="btn secondary" href="/products">Cancel</a><% } %>
   </form>
 </div>
 <div class="card">
@@ -74,6 +75,7 @@
           <td><%= product.current_stock_qty.toFixed(2) %></td>
           <td><%= product.selling_price.toFixed(2) %></td>
           <td class="invoice-actions">
+            <a class="btn secondary" href="/products/edit/<%= product.id %>">Edit</a>
             <form method="post" action="/products/delete" onsubmit="return confirm('Delete this product?');" style="display:inline-block;">
               <input type="hidden" name="product_id" value="<%= product.id %>" />
               <button class="btn secondary" type="submit">Delete</button>
