@@ -119,6 +119,16 @@ app.post('/customers', authRequired, (req, res) => {
   db.run('INSERT INTO customers (customer_name, phone) VALUES (?, ?)', [req.body.customer_name || '', req.body.phone || ''], () => res.redirect('/customers'));
 });
 
+app.post('/customers/delete', authRequired, (req, res) => {
+  const customerId = req.body.customer_id;
+  if (!customerId) return res.redirect('/customers');
+
+  db.serialize(() => {
+    db.run('UPDATE sales_invoices SET customer_id = NULL WHERE customer_id = ?', [customerId]);
+    db.run('DELETE FROM customers WHERE id = ?', [customerId], () => res.redirect('/customers'));
+  });
+});
+
 app.get('/products', authRequired, (req, res) => {
   db.all(`SELECT p.*, c.category_name, b.brand_name FROM products p
     LEFT JOIN categories c ON p.category_id = c.id
@@ -140,6 +150,17 @@ app.post('/products', authRequired, (req, res) => {
   const { product_name, sku_barcode, category_id, brand_id, unit, purchase_price, selling_price, current_stock_qty, min_stock_alert } = req.body;
   db.run(`INSERT INTO products (product_name, sku_barcode, category_id, brand_id, unit, purchase_price, selling_price, current_stock_qty, min_stock_alert)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [product_name, sku_barcode, category_id || null, brand_id || null, unit || 'Pcs', purchase_price || 0, selling_price || 0, current_stock_qty || 0, min_stock_alert || 5], () => res.redirect('/products'));
+});
+
+app.post('/products/delete', authRequired, (req, res) => {
+  const productId = req.body.product_id;
+  if (!productId) return res.redirect('/products');
+
+  db.serialize(() => {
+    db.run('DELETE FROM purchase_items WHERE product_id = ?', [productId]);
+    db.run('DELETE FROM sales_invoice_items WHERE product_id = ?', [productId]);
+    db.run('DELETE FROM products WHERE id = ?', [productId], () => res.redirect('/products'));
+  });
 });
 
 app.get('/purchases', authRequired, (req, res) => {

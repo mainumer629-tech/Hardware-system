@@ -17,7 +17,7 @@
 </div>
 <div class="card">
   <table class="table">
-    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Khata Balance</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Khata Balance</th><th>Action</th></tr></thead>
     <tbody>
       <% customers.forEach(customer => { %>
         <tr>
@@ -25,6 +25,12 @@
           <td><%= customer.customer_name %></td>
           <td><%= customer.phone || '-' %></td>
           <td><%= customer.current_khata_balance.toFixed(2) %></td>
+          <td class="invoice-actions">
+            <form method="post" action="/customers/delete" onsubmit="return confirm('Delete this customer?');" style="display:inline-block;">
+              <input type="hidden" name="customer_id" value="<%= customer.id %>" />
+              <button class="btn secondary" type="submit">Delete</button>
+            </form>
+          </td>
         </tr>
       <% }); %>
     </tbody>

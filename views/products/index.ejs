@@ -61,7 +61,7 @@
 </div>
 <div class="card">
   <table class="table">
-    <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Brand</th><th>SKU</th><th>Unit</th><th>Stock</th><th>Sell Price</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Brand</th><th>SKU</th><th>Unit</th><th>Stock</th><th>Sell Price</th><th>Action</th></tr></thead>
     <tbody>
       <% products.forEach(product => { %>
         <tr>
@@ -73,6 +73,12 @@
           <td><%= product.unit %></td>
           <td><%= product.current_stock_qty.toFixed(2) %></td>
           <td><%= product.selling_price.toFixed(2) %></td>
+          <td class="invoice-actions">
+            <form method="post" action="/products/delete" onsubmit="return confirm('Delete this product?');" style="display:inline-block;">
+              <input type="hidden" name="product_id" value="<%= product.id %>" />
+              <button class="btn secondary" type="submit">Delete</button>
+            </form>
+          </td>
         </tr>
       <% }); %>
     </tbody>
