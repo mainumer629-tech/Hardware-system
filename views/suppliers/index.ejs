@@ -1,4 +1,6 @@
 <%- include('../partials', { title: 'Suppliers', user: user }) %>
+<% editingSupplier = typeof editingSupplier !== 'undefined' ? editingSupplier : null; %>
+<% suppliers = typeof suppliers !== 'undefined' ? suppliers : []; %>
 <div class="card">
   <div class="topbar">
     <h2>Suppliers</h2>
@@ -26,7 +28,7 @@
           <td><%= supplier.id %></td>
           <td><%= supplier.supplier_name %></td>
           <td><%= supplier.phone || '-' %></td>
-          <td><%= supplier.current_ledger_balance.toFixed(2) %></td>
+          <td><%= (supplier.current_ledger_balance || 0).toFixed(2) %></td>
           <td class="invoice-actions">
             <a class="btn secondary" href="/suppliers/edit/<%= supplier.id %>">Edit</a>
             <form method="post" action="/suppliers/delete" onsubmit="return confirm('Delete this supplier?');" style="display:inline-block;">

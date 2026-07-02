@@ -81,7 +81,7 @@ const renderList = (view, query, callback) => {
 
 app.get('/categories', authRequired, (req, res) => {
   renderList('categories', 'SELECT * FROM categories', (err, rows) => {
-    res.render('categories/index', { user: req.session.user, categories: rows || [] });
+    res.render('categories/index', { user: req.session.user, categories: rows || [], editingCategory: null });
   });
 });
 
@@ -118,7 +118,7 @@ app.post('/categories/delete', authRequired, (req, res) => {
 
 app.get('/brands', authRequired, (req, res) => {
   renderList('brands', 'SELECT * FROM brands', (err, rows) => {
-    res.render('brands/index', { user: req.session.user, brands: rows || [] });
+    res.render('brands/index', { user: req.session.user, brands: rows || [], editingBrand: null });
   });
 });
 
@@ -155,7 +155,7 @@ app.post('/brands/delete', authRequired, (req, res) => {
 
 app.get('/suppliers', authRequired, (req, res) => {
   renderList('suppliers', 'SELECT * FROM suppliers', (err, rows) => {
-    res.render('suppliers/index', { user: req.session.user, suppliers: rows || [] });
+    res.render('suppliers/index', { user: req.session.user, suppliers: rows || [], editingSupplier: null });
   });
 });
 
@@ -192,7 +192,7 @@ app.post('/suppliers/delete', authRequired, (req, res) => {
 
 app.get('/customers', authRequired, (req, res) => {
   renderList('customers', 'SELECT * FROM customers', (err, rows) => {
-    res.render('customers/index', { user: req.session.user, customers: rows || [] });
+    res.render('customers/index', { user: req.session.user, customers: rows || [], editingCustomer: null });
   });
 });
 
@@ -237,7 +237,8 @@ app.get('/products', authRequired, (req, res) => {
           user: req.session.user,
           products: rows || [],
           categories: categories || [],
-          brands: brands || []
+          brands: brands || [],
+          editingProduct: null
         });
       });
     });

@@ -1,4 +1,8 @@
 <%- include('../partials', { title: 'Products', user: user }) %>
+<% editingProduct = typeof editingProduct !== 'undefined' ? editingProduct : null; %>
+<% products = typeof products !== 'undefined' ? products : []; %>
+<% categories = typeof categories !== 'undefined' ? categories : []; %>
+<% brands = typeof brands !== 'undefined' ? brands : []; %>
 <div class="card">
   <form method="post" action="<%= editingProduct ? '/products/edit/' + editingProduct.id : '/products' %>" class="form-grid">
     <div class="topbar">
@@ -72,8 +76,8 @@
           <td><%= product.brand_name || '-' %></td>
           <td><%= product.sku_barcode || '-' %></td>
           <td><%= product.unit %></td>
-          <td><%= product.current_stock_qty.toFixed(2) %></td>
-          <td><%= product.selling_price.toFixed(2) %></td>
+          <td><%= (product.current_stock_qty || 0).toFixed(2) %></td>
+          <td><%= (product.selling_price || 0).toFixed(2) %></td>
           <td class="invoice-actions">
             <a class="btn secondary" href="/products/edit/<%= product.id %>">Edit</a>
             <form method="post" action="/products/delete" onsubmit="return confirm('Delete this product?');" style="display:inline-block;">

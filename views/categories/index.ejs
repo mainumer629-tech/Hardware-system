@@ -1,4 +1,6 @@
 <%- include('../partials', { title: 'Categories', user: user }) %>
+<% editingCategory = typeof editingCategory !== 'undefined' ? editingCategory : null; %>
+<% categories = typeof categories !== 'undefined' ? categories : []; %>
 <div class="card">
   <div class="topbar">
     <h2>Categories</h2>

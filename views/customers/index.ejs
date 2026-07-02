@@ -1,4 +1,6 @@
 <%- include('../partials', { title: 'Customers', user: user }) %>
+<% editingCustomer = typeof editingCustomer !== 'undefined' ? editingCustomer : null; %>
+<% customers = typeof customers !== 'undefined' ? customers : []; %>
 <div class="card">
   <form method="post" action="<%= editingCustomer ? '/customers/edit/' + editingCustomer.id : '/customers' %>" class="form-grid">
     <div class="topbar">
@@ -25,7 +27,7 @@
           <td><%= customer.id %></td>
           <td><%= customer.customer_name %></td>
           <td><%= customer.phone || '-' %></td>
-          <td><%= customer.current_khata_balance.toFixed(2) %></td>
+          <td><%= (customer.current_khata_balance || 0).toFixed(2) %></td>
           <td class="invoice-actions">
             <a class="btn secondary" href="/customers/edit/<%= customer.id %>">Edit</a>
             <form method="post" action="/customers/delete" onsubmit="return confirm('Delete this customer?');" style="display:inline-block;">
