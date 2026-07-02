@@ -1,0 +1,38 @@
+<%- include('../partials', { title: 'Suppliers', user: user }) %>
+<div class="card">
+  <div class="topbar">
+    <h2>Suppliers</h2>
+  </div>
+  <form method="post" action="/suppliers" class="form-grid">
+    <div class="input-group">
+      <label>Supplier name</label>
+      <input name="supplier_name" placeholder="Supplier name" required />
+    </div>
+    <div class="input-group">
+      <label>Phone</label>
+      <input name="phone" placeholder="Phone" />
+    </div>
+    <div></div>
+    <button class="btn" type="submit">Add Supplier</button>
+  </form>
+</div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Balance</th></tr></thead>
+    <tbody>
+      <% suppliers.forEach(supplier => { %>
+        <tr>
+          <td><%= supplier.id %></td>
+          <td><%= supplier.supplier_name %></td>
+          <td><%= supplier.phone || '-' %></td>
+          <td><%= supplier.current_ledger_balance.toFixed(2) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<footer>Keep supplier records and ledger balances in one place.</footer>
+</main>
+</div>
+</body>
+</html>

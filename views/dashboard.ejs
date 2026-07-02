@@ -1,0 +1,23 @@
+<%- include('partials', { title: 'Dashboard', user: user }) %>
+<div class="card-grid">
+  <div class="card stat-card">
+    <h3>Total Products</h3>
+    <p><%= summary.products %></p>
+  </div>
+  <div class="card stat-card">
+    <h3>Total Customers</h3>
+    <p><%= summary.customers %></p>
+  </div>
+  <div class="card stat-card">
+    <h3>Total Suppliers</h3>
+    <p><%= summary.suppliers %></p>
+  </div>
+  <div class="card stat-card">
+    <h3>Total Sales Invoices</h3>
+    <p><%= summary.invoices %></p>
+  </div>
+</div>
+<footer>Hardware Shop Management System • Clean, modern dashboard layout.</footer>
+</main>
+</body>
+</html>

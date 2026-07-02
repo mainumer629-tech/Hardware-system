@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="page">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">HS</div>
+        <div>
+          <div>Hardware Shop</div>
+          <small>Management</small>
+        </div>
+      </div>
+      <nav>
+        <a href="/dashboard"><span>Dashboard</span></a>
+        <a href="/products"><span>Products</span></a>
+        <a href="/categories"><span>Categories</span></a>
+        <a href="/brands"><span>Brands</span></a>
+        <a href="/suppliers"><span>Suppliers</span></a>
+        <a href="/customers"><span>Customers</span></a>
+        <a href="/purchases"><span>Purchases</span></a>
+        <a href="/sales"><span>Sales</span></a>
+        <a href="/reports"><span>Reports</span></a>
+        <a href="/logout" class="secondary"><span>Logout</span></a>
+      </nav>
+    </aside>
+    <main class="content">
+      <div class="topbar">
+        <h1><%= title %></h1>
+        <% if (user) { %>
+          <div class="user-chip">
+            <span><strong><%= user.name %></strong></span>
+            <span><%= user.role %></span>
+          </div>
+        <% } %>
+      </div>

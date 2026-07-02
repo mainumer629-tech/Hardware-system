@@ -1,0 +1,85 @@
+<%- include('../partials', { title: 'Products', user: user }) %>
+<div class="card">
+  <form method="post" action="/products" class="form-grid">
+    <div class="topbar">
+      <h2>Products</h2>
+      <button class="btn" type="submit">Add Product</button>
+    </div>
+    <div class="input-group">
+      <label>Product name</label>
+      <input name="product_name" placeholder="Name" required />
+    </div>
+    <div class="input-group">
+      <label>SKU / Barcode</label>
+      <input name="sku_barcode" placeholder="SKU / Barcode" />
+    </div>
+    <div class="input-group">
+      <label>Category</label>
+      <select name="category_id">
+        <option value="">Category</option>
+        <% categories.forEach(category => { %>
+          <option value="<%= category.id %>"><%= category.category_name %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Brand</label>
+      <select name="brand_id">
+        <option value="">Brand</option>
+        <% brands.forEach(brand => { %>
+          <option value="<%= brand.id %>"><%= brand.brand_name %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Unit</label>
+      <select name="unit">
+        <option value="Pcs">Pcs</option>
+        <option value="Kg">Kg</option>
+        <option value="Feet">Feet</option>
+        <option value="Bag">Bag</option>
+        <option value="Roll">Roll</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Purchase price</label>
+      <input name="purchase_price" type="number" step="0.01" placeholder="Purchase price" required />
+    </div>
+    <div class="input-group">
+      <label>Selling price</label>
+      <input name="selling_price" type="number" step="0.01" placeholder="Selling price" required />
+    </div>
+    <div class="input-group">
+      <label>Stock quantity</label>
+      <input name="current_stock_qty" type="number" step="0.01" placeholder="Stock qty" value="0" />
+    </div>
+    <div class="input-group">
+      <label>Min stock alert</label>
+      <input name="min_stock_alert" type="number" step="0.01" placeholder="Min stock alert" value="5" />
+    </div>
+  </form>
+</div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Brand</th><th>SKU</th><th>Unit</th><th>Stock</th><th>Sell Price</th></tr></thead>
+    <tbody>
+      <% products.forEach(product => { %>
+        <tr>
+          <td><%= product.id %></td>
+          <td><%= product.product_name %></td>
+          <td><%= product.category_name || '-' %></td>
+          <td><%= product.brand_name || '-' %></td>
+          <td><%= product.sku_barcode || '-' %></td>
+          <td><%= product.unit %></td>
+          <td><%= product.current_stock_qty.toFixed(2) %></td>
+          <td><%= product.selling_price.toFixed(2) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<footer>Manage all products and pricing in your store.</footer>
+</main>
+</div>
+</body>
+</html>

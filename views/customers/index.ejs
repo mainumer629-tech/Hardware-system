@@ -1,0 +1,37 @@
+<%- include('../partials', { title: 'Customers', user: user }) %>
+<div class="card">
+  <form method="post" action="/customers" class="form-grid">
+    <div class="topbar">
+      <h2>Customers</h2>
+      <button class="btn" type="submit">Add Customer</button>
+    </div>
+    <div class="input-group">
+      <label>Customer name</label>
+      <input name="customer_name" placeholder="Customer name" required />
+    </div>
+    <div class="input-group">
+      <label>Phone</label>
+      <input name="phone" placeholder="Phone" />
+    </div>
+  </form>
+</div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Khata Balance</th></tr></thead>
+    <tbody>
+      <% customers.forEach(customer => { %>
+        <tr>
+          <td><%= customer.id %></td>
+          <td><%= customer.customer_name %></td>
+          <td><%= customer.phone || '-' %></td>
+          <td><%= customer.current_khata_balance.toFixed(2) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<footer>Customer accounts and credit balances.</footer>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<%- include('../partials', { title: 'Reports', user: user }) %>
+<div class="card-grid">
+  <div class="card">
+    <h3>Low Stock Alerts</h3>
+    <table class="table">
+      <thead><tr><th>ID</th><th>Product</th><th>Stock</th><th>Min Alert</th></tr></thead>
+      <tbody>
+        <% lowStock.forEach(item => { %>
+          <tr>
+            <td><%= item.id %></td>
+            <td><%= item.product_name %></td>
+            <td><%= item.current_stock_qty.toFixed(2) %></td>
+            <td><%= item.min_stock_alert.toFixed(2) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Recent Sales</h3>
+    <table class="table">
+      <thead><tr><th>ID</th><th>Total</th><th>Paid</th><th>Balance</th><th>Date</th></tr></thead>
+      <tbody>
+        <% recentSales.forEach(sale => { %>
+          <tr>
+            <td><%= sale.id %></td>
+            <td><%= sale.grand_total.toFixed(2) %></td>
+            <td><%= sale.amount_received.toFixed(2) %></td>
+            <td><%= sale.balance_due.toFixed(2) %></td>
+            <td><%= sale.invoice_date %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<footer>Review low-stock products and recent sales trends.</footer>
+</main>
+</div>
+</body>
+</html>

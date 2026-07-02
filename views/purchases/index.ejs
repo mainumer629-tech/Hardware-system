@@ -1,0 +1,61 @@
+<%- include('../partials', { title: 'Purchases', user: user }) %>
+<div class="card">
+  <form method="post" action="/purchases" class="form-grid">
+    <div class="topbar">
+      <h2>Purchase Management</h2>
+      <button class="btn" type="submit">Save Purchase</button>
+    </div>
+    <div class="input-group">
+      <label>Supplier</label>
+      <select name="supplier_id" required>
+        <option value="">Choose supplier</option>
+        <% suppliers.forEach(supplier => { %>
+          <option value="<%= supplier.id %>"><%= supplier.supplier_name %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Product</label>
+      <select name="product_id" required>
+        <option value="">Choose product</option>
+        <% products.forEach(product => { %>
+          <option value="<%= product.id %>"><%= product.product_name %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Qty purchased</label>
+      <input name="qty_purchased" type="number" step="0.01" placeholder="Qty purchased" required />
+    </div>
+    <div class="input-group">
+      <label>Unit cost</label>
+      <input name="unit_cost" type="number" step="0.01" placeholder="Unit cost" required />
+    </div>
+    <div class="input-group">
+      <label>Paid amount</label>
+      <input name="paid_amount" type="number" step="0.01" placeholder="Paid amount" required />
+    </div>
+  </form>
+</div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>ID</th><th>Supplier</th><th>Total</th><th>Paid</th><th>Due</th><th>Date</th></tr></thead>
+    <tbody>
+      <% purchases.forEach(purchase => { %>
+        <tr>
+          <td><%= purchase.id %></td>
+          <td><%= purchase.supplier_name || '-' %></td>
+          <td><%= purchase.total_amount.toFixed(2) %></td>
+          <td><%= purchase.paid_amount.toFixed(2) %></td>
+          <td><%= purchase.due_amount.toFixed(2) %></td>
+          <td><%= purchase.purchase_date %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<footer>Record purchase orders and inventory stock additions.</footer>
+</main>
+</div>
+</body>
+</html>

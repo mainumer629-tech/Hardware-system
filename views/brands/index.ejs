@@ -1,0 +1,29 @@
+<%- include('../partials', { title: 'Brands', user: user }) %>
+<div class="card">
+  <div class="topbar">
+    <h2>Brands</h2>
+  </div>
+  <form method="post" action="/brands" class="form-grid">
+    <div class="input-group">
+      <label>Brand name</label>
+      <input name="brand_name" placeholder="New brand" required />
+    </div>
+    <div></div>
+    <button class="btn" type="submit">Add Brand</button>
+  </form>
+</div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>ID</th><th>Brand</th></tr></thead>
+    <tbody>
+      <% brands.forEach(brand => { %>
+        <tr><td><%= brand.id %></td><td><%= brand.brand_name %></td></tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<footer>Track all product brands in your inventory.</footer>
+</main>
+</div>
+</body>
+</html>
