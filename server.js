@@ -29,6 +29,11 @@ const authRequired = (req, res, next) => {
   next();
 };
 
+// Health check endpoint - no auth required
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.get('/', (req, res) => {
   if (req.session.user) return res.redirect('/dashboard');
   res.redirect('/login');
@@ -427,8 +432,9 @@ app.get('/reports', authRequired, (req, res) => {
   });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Hardware Shop Management System is running on http://localhost:${PORT}`);
+// Bind to 0.0.0.0 to allow Railway health checks to reach the server
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Hardware Shop Management System is running on http://0.0.0.0:${PORT}`);
 });
 
 server.on('error', (err) => {
@@ -438,3 +444,4 @@ server.on('error', (err) => {
   }
   throw err;
 });
+
