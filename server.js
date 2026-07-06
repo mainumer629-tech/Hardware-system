@@ -304,6 +304,29 @@ app.get('/purchases', authRequired, (req, res) => {
   });
 });
 
+app.get('/purchases/edit/:id', authRequired, (req, res) => {
+  const purchaseId = req.params.id;
+  db.all(`SELECT p.*, s.supplier_name FROM purchases p
+    LEFT JOIN suppliers s ON p.supplier_id = s.id ORDER BY p.purchase_date DESC`, [], (err, purchases) => {
+    db.all('SELECT * FROM suppliers', [], (e1, suppliers) => {
+      db.all('SELECT * FROM products', [], (e2, products) => {
+        db.all('SELECT * FROM purchase_items WHERE purchase_id = ?', [purchaseId], (e3, items) => {
+          db.get('SELECT * FROM purchases WHERE id = ?', [purchaseId], (errPurchase, purchase) => {
+            res.render('purchases/index', {
+              user: req.session.user,
+              purchases: purchases || [],
+              suppliers: suppliers || [],
+              products: products || [],
+              editingPurchase: purchase || null,
+              purchaseItems: items || []
+            });
+          });
+        });
+      });
+    });
+  });
+});
+
 app.post('/purchases', authRequired, (req, res) => {
   const supplier_id = req.body.supplier_id || null;
   const qty = parseFloat(req.body.qty_purchased) || 0;
@@ -320,6 +343,35 @@ app.post('/purchases', authRequired, (req, res) => {
       db.run('UPDATE products SET current_stock_qty = current_stock_qty + ? WHERE id = ?', [qty, productId]);
     }
     res.redirect('/purchases');
+  });
+});
+
+app.post('/purchases/edit/:id', authRequired, (req, res) => {
+  const purchaseId = req.params.id;
+  const supplier_id = req.body.supplier_id || null;
+  const paid_amount = parseFloat(req.body.paid_amount) || 0;
+  
+  db.get('SELECT total_amount FROM purchases WHERE id = ?', [purchaseId], (err, purchase) => {
+    if (!purchase) return res.redirect('/purchases');
+    const due_amount = purchase.total_amount - paid_amount;
+    db.run('UPDATE purchases SET supplier_id = ?, paid_amount = ?, due_amount = ? WHERE id = ?', [supplier_id, paid_amount, due_amount, purchaseId], () => res.redirect('/purchases'));
+  });
+});
+
+app.post('/purchases/delete', authRequired, (req, res) => {
+  const purchaseId = req.body.purchase_id;
+  if (!purchaseId) return res.redirect('/purchases');
+
+  db.serialize(() => {
+    db.all('SELECT product_id, qty_purchased FROM purchase_items WHERE purchase_id = ?', [purchaseId], (err, items) => {
+      if (items) {
+        items.forEach(item => {
+          db.run('UPDATE products SET current_stock_qty = current_stock_qty - ? WHERE id = ?', [item.qty_purchased, item.product_id]);
+        });
+      }
+      db.run('DELETE FROM purchase_items WHERE purchase_id = ?', [purchaseId]);
+      db.run('DELETE FROM purchases WHERE id = ?', [purchaseId], () => res.redirect('/purchases'));
+    });
   });
 });
 
